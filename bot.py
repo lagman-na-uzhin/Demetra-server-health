@@ -36,22 +36,34 @@ logger = telebot.logger
 telebot.logger.setLevel(logging.ERROR) # Outputs Error messages to console.
 # /Log
 
-# Функция для сохранения chatId в файл
+# Функция для записи chatId в файл, если он не записан
 def save_chat_id(chat_id):
+    if os.path.exists('chat_id.txt'):
+        # Открываем файл для чтения
+        with open('chat_id.txt', 'r') as f:
+            content = f.read().strip()
+        
+        # Проверяем, если файл не пустой и chatId уже записан
+        if content:
+            print(f"chat_id уже записан: {content}")
+            return  # Выходим из функции, если chatId уже есть
+
+    # Если файл пустой, записываем новый chatId
     with open('chat_id.txt', 'w') as f:
         f.write(str(chat_id))
+    print(f"chat_id {chat_id} записан в chat_id.txt")
 
+# Функция для чтения chatId из файла
 def load_chat_id():
     if os.path.exists('chat_id.txt'):
         with open('chat_id.txt', 'r') as f:
             content = f.read().strip()
-            if content.isdigit():  # Проверяем, что содержимое файла - это число
+            if content.isdigit():
                 return int(content)
             else:
-                print("Некорректные данные в файле chat_id.txt")  # Логируем ошибку
-    else:
-        print("Файл chat_id.txt не существует")  # Логируем отсутствие файла
-    return None  # Возвращаем None, если файла нет или данные некорректны
+                print("Некорректные данные в файле chat_id.txt")
+    return None
+
  
 chatId = load_chat_id()
 

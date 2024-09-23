@@ -36,39 +36,6 @@ logger = telebot.logger
 telebot.logger.setLevel(logging.ERROR) # Outputs Error messages to console.
 # /Log
 
-# Функция для записи chatId в файл, если он не записан
-def save_chat_id(chat_id):
-    if os.path.exists('chat_id.txt'):
-        # Открываем файл для чтения
-        with open('chat_id.txt', 'r') as f:
-            content = f.read().strip()
-        
-        # Проверяем, если файл не пустой и chatId уже записан
-        if content:
-            print(f"chat_id уже записан: {content}")
-            return  # Выходим из функции, если chatId уже есть
-
-    # Если файл пустой, записываем новый chatId
-    with open('chat_id.txt', 'w') as f:
-        f.write(str(chat_id))
-    print(f"chat_id {chat_id} записан в chat_id.txt")
-
-# Функция для чтения chatId из файла
-def load_chat_id():
-    if os.path.exists('chat_id.txt'):
-        with open('chat_id.txt', 'r') as f:
-            content = f.read().strip()
-            if content.isdigit():
-                return int(content)
-            else:
-                print("Некорректные данные в файле chat_id.txt")
-    return None
-
- 
-chatId = load_chat_id()
-
-
-
 #hostn = os.uname()[1]
 #hostn = (hostn[0:hostn.find('.')])
 
@@ -95,44 +62,26 @@ else:
 
 # Menu vars
 lt_cpu = ("CPU")
-lt_cpu = "\U0001F39B " + lt_cpu
 lt_ram = ("RAM")
-lt_ram = "\U0001F39A " + lt_ram
 lt_disks = ("Disk usage")
-lt_disks = "\U0001F4BE " + lt_disks
 lt_linuxtools = ("Linux tools")
-lt_linuxtools = "\U0001F9F0 " + lt_linuxtools
 #----
 lt_ping = ("Ping test")
-lt_ping =  "\U0001F3D3 " + lt_ping
 lt_traceroute = ("Traceroute test")
-lt_traceroute =  "\U0001F9ED " + lt_traceroute
 lt_topproc = ("Top processes")
-lt_topproc =  "\U0001F51D " + lt_topproc
 #lt_ssvalid = ("Port check")
 #lt_ssvalid =  "\U0001F442\U0001F3FC " + lt_ssvalid
 lt_spdtst = ("Network speed test")
-lt_spdtst =  "\U0001F4E1 " + lt_spdtst
 lt_currntwrkload = ("Current network load")
-lt_currntwrkload =  "\U0001F51B " + lt_currntwrkload
 lt_currntdiskload = ("Current disk i/o")
-lt_currntdiskload = "\U0001F4BD " + lt_currntdiskload
 lt_starttime = ("Uptime")
-lt_starttime = "\U0001F7E2 " + lt_starttime
 lt_mainmenu = ("Main menu")
-lt_mainmenu =  "\U0001F3E1 " + lt_mainmenu
 lt_docker_container = ("Docker Container")
-lt_docker_container = "\U00002b50" + lt_docker_container
 lt_nearpool = ("My pool info")
-lt_nearpool = "\u2139 " + lt_nearpool
 lt_nearlogs = ("Near logs")
-lt_nearlogs = "\U0001F4CB" + lt_nearlogs
 lt_nearcurrent = ("Current")
-lt_nearcurrent = "\u23fa " + lt_nearcurrent
 lt_nearproposals = ("Proposals")
-lt_nearproposals = "\u23e9 " + lt_nearproposals
 lt_nearnext = ("Next")
-lt_nearnext = "\u23e9 " + lt_nearnext
 
 ## /Menu vars
 
@@ -486,10 +435,11 @@ def historygetslowlog(f,t,lbl,ptitle,poutf,rm):
 #/History load welcome
 
 # CPU
-@bot.message_handler(func=lambda message: message.text == config.botName + " " + lt_cpu)
+cpuCommand = onfig.botName + " " + lt_cpu
+@bot.message_handler(func=lambda message: message.text == cpuCommand)
 def command_cpu(message):
-  if message.from_user.id == chatid:
     try:
+      chatid = message.chat.id
       sysload = str(psutil.getloadavg())
       cpuutil = str(psutil.cpu_percent(percpu=True))
       cpu = ("*System load (1,5,15 min):* _") + sysload + ("_\n*CPU utilization %:* _") + cpuutil + "_"
@@ -497,36 +447,32 @@ def command_cpu(message):
       historyget("db/cpuload.dat",30,("Utilization"),("CPU Utilization"),"/tmp/cpuload.png",cpuloadhist)
     except:
       bot.send_message(chatid, text=("Can't get CPU info"))
-  else:
-    pass
 # /CPU
 
 # RAM
-@bot.message_handler(func=lambda message: message.text == config.botName + " " + lt_ram)
+ramCommand = config.botName + " " + lt_ram
+@bot.message_handler(func=lambda message: message.text == ramCommand
 def command_ram(message):
-  if message.from_user.id == chatid:
     try:
+      chatid = message.chat.id
       ram = ("*RAM, Gb.*\n_Total: ") + str(subprocess.check_output(["free -mh | grep Mem | awk '{print $2}'"], shell = True,encoding='utf-8')) + ("Available: ") + str(subprocess.check_output(["free -mh | grep Mem | awk '{print $7}'"], shell = True,encoding='utf-8')) + ("Used: ") + str(subprocess.check_output(["free -mh | grep Mem | awk '{print $3}'"], shell = True,encoding='utf-8')) + "_"
       swap = ("*SWAP, Gb.*\n_Total: ") + str(subprocess.check_output(["free -mh | grep Swap | awk '{print $2}'"], shell = True,encoding='utf-8')) + ("Available: ") + str(subprocess.check_output(["free -mh | grep Swap | awk '{print $7}'"], shell = True,encoding='utf-8')) + ("Used: ") + str(subprocess.check_output(["free -mh | grep Swap | awk '{print $3}'"], shell = True,encoding='utf-8')) + "_"
       bot.send_message(chatid, text=ram + swap, parse_mode="Markdown")
       historyget("db/ramload.dat",30,("Utilization"),("RAM Utilization"),"/tmp/ramload.png",ramloadhist)
     except:
       bot.send_message(chatid, text=("Can't get RAM info"), parse_mode="Markdown")
-  else:
-    pass
 # /RAM
 
 # Disk
-@bot.message_handler(func=lambda message: message.text == config.botName + " " + lt_disks)
+dicksCommand = config.botName + " " + lt_disks
+@bot.message_handler(func=lambda message: message.text == dicksCommand)
 def command_disk(message):
-  if message.from_user.id == chatid:
     try:
+      chatid = message.chat.id
       disk = str(subprocess.check_output(["df -h -t ext4"], shell = True,encoding='utf-8'))
       bot.send_message(chatid, text=disk, parse_mode="Markdown", reply_markup=markup)
     except:
       bot.send_message(chatid, text=("Can't get disk info"), parse_mode="Markdown", reply_markup=markup)
-  else:
-    pass
 # /Disk
 
 # Server Info tools
@@ -2258,18 +2204,18 @@ def dockerSaveImg(each_metrics_count_run, each_metrics_time, each_metrics_count_
 # Linux tools
 
 # Linux tools start
-@bot.message_handler(func=lambda message: message.text == config.botName + " " + lt_linuxtools)
+linuxToolsCommand = config.botName + " " + lt_linuxtools
+@bot.message_handler(func=lambda message: message.text == linuxToolsCommand)
 def command_linuxtools(message):
-  if message.from_user.id == chatid:
-    bot.send_message(chatid, text=("Slowly, slowly, some processes need time. ") + "\U000023F3", reply_markup=markuplinux)
-  else:
-    pass
+chatid = message.from_user.id:
+bot.send_message(chatid, text=("Slowly, slowly, some processes need time. ") + "\U000023F3", reply_markup=markuplinux)
 # /Linux tools start
 
 # Ping test
-@bot.message_handler(func=lambda message: message.text == config.botName + " " + lt_ping)
+pingCommand = config.botName + " " + lt_ping
+@bot.message_handler(func=lambda message: message.text == pingCommand)
 def command_pingcheck(message):
-  if message.from_user.id == chatid:
+    chatid = message.from_user.id
     try:
       bot.send_chat_action(chatid, "typing")
       pingcheck = "ping -c 5 " + config.srvping
@@ -2278,14 +2224,13 @@ def command_pingcheck(message):
       historygetping("db/pingcheck.dat",30,("ms"),("Ping test"),"/tmp/pingcheck.png",pingcheckhist)
     except:
       bot.send_message(chatid, text=("Can't execute ping test"), reply_markup=markuplinux)
-  else:
-    pass
 # /Ping test
 
 # Traceroute test
-@bot.message_handler(func=lambda message: message.text == config.botName + " " + lt_traceroute)
+tracerouteCommand = config.botName + " " + lt_traceroute
+@bot.message_handler(func=lambda message: message.text == tracerouteCommand)
 def command_traceroutecheck(message):
-  if message.from_user.id == chatid:
+    chatid = message.from_user.id
     try:
       bot.send_chat_action(chatid, "typing")
       bot.send_chat_action(chatid, "typing")
@@ -2294,41 +2239,38 @@ def command_traceroutecheck(message):
       bot.send_message(chatid, text=traceroutecheck, reply_markup=markuplinux)
     except:
       bot.send_message(chatid, text=("Can't execute traceroute, try to change ip or server in config"), reply_markup=markuplinux)
-  else:
-    pass
 # /Traceroute test
 
 # Top processes
-@bot.message_handler(func=lambda message: message.text == config.botName + " " + lt_topproc)
+topprocCommand = config.botName + " " + lt_topproc
+@bot.message_handler(func=lambda message: message.text == ctopprocCommand)
 def command_timediff(message):
-  if message.from_user.id == chatid:
+    chatid = message.from_user.id
     try:
       topps = "ps -eo pid,ppid,user,start,%mem,pcpu,cmd --sort=-%mem | head"
       topps = str(subprocess.check_output(topps, shell = True,encoding='utf-8'))
       bot.send_message(chatid, text=topps, reply_markup=markuplinux)
     except:
       bot.send_message(chatid, text=("Can't get top processes"), reply_markup=markuplinux)
-  else:
-    pass
 # /Top processes
 
 # Server start date/time
-@bot.message_handler(func=lambda message: message.text == config.botName + " " + lt_starttime)
+startTimeCommand = config.botName + " " + lt_starttime
+@bot.message_handler(func=lambda message: message.text == startTimeCommand)
 def command_srvstart(message):
-  if message.from_user.id == chatid:
+    chatid = message.from_user.id:
     try:
       startt = ("System start: ") + str(datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%b/%d/%Y %H:%M:%S"))
       bot.send_message(chatid, text=startt, reply_markup=markuplinux)
     except:
       bot.send_message(chatid, text=("Can't get system start date"), reply_markup=markuplinux)
-  else:
-    pass
 # /Server start date/time
 
 # Current network load
-@bot.message_handler(func=lambda message: message.text == config.botName + " " + lt_currntwrkload)
+currntwrkloadCommand = config.botName + " " + lt_currntwrkload
+@bot.message_handler(func=lambda message: message.text == currntwrkloadCommand)
 def command_currntwrkload(message):
-  if message.from_user.id == chatid:
+    chatid = message.from_user.id:
     try:
       bot.send_chat_action(chatid, "typing")
       currentloadn = psutil.net_io_counters()
@@ -2345,15 +2287,14 @@ def command_currntwrkload(message):
       bot.send_message(chatid, text=("*Current network load\nIncoming:* _") + recvspd + (" Mb/s_\n*Outgoing:* _") + sentspd + (" Mb/s_"), parse_mode="Markdown", reply_markup=markuplinux)
       historygetnb("db/networkload.dat",0.5,("Mb/s"),("Upload"),("Download"),"/tmp/networkload.png",networkcheckhist)
     except:
-      bot.send_message(chatid, text=("Can't get current network load"), parse_mode="Markdown", reply_markup=markuplinux)
-  else:
-    pass
+      bot.send_message(chatid, text=("Can't get current network load"), parse_mode="Markdown", reply_markup=markuplinux)    pass
 # /Current network load
 
 # Disk I/O
-@bot.message_handler(func=lambda message: message.text == config.botName + " " + lt_currntdiskload)
+currntdiskloadCommand = config.botName + " " + lt_currntdiskload
+@bot.message_handler(func=lambda message: message.text == currntdiskloadCommand)
 def command_currdiskload(message):
-  if message.from_user.id == chatid:
+    chatid message.from_user.id
     try:
       bot.send_chat_action(chatid, "typing")
       currentloadd = psutil.disk_io_counters()
@@ -2371,17 +2312,16 @@ def command_currdiskload(message):
       historygetdio("db/diskioload.dat",0.5,("MB/s"),("Read"),("Write"),"/tmp/diskioload.png",diskiocheckhist)
     except:
       bot.send_message(chatid, text=("Can't get current disk load"), parse_mode="Markdown")
-  else:
-    pass
 # /Disk I/O
 
 # /Linux tools
 #######################################################
 
 # Network speedtest
-@bot.message_handler(func=lambda message: message.text == config.botName + " " + lt_spdtst)
+spdtst = config.botName + " " + lt_spdtst
+@bot.message_handler(func=lambda message: message.text == spdtst)
 def command_testspeed(message):
-  if message.from_user.id == chatid:
+    chatid = message.from_user.id:
     try:
       bot.send_chat_action(chatid, "typing")
       testspeedcmd = "python3 " + config.serverbotpath + "/speedtest-cli --share | grep -i 'Share results' | awk '{print $3}' | wget -i - -O /tmp/speedtestcheck.png"
@@ -2391,17 +2331,14 @@ def command_testspeed(message):
       bot.send_photo(chatid, testspeedfile)
     except:
       bot.send_message(chatid, text=("Speed test failed"))
-  else:
-    pass
 # Network speedtest end
 
 # Main menu
-@bot.message_handler(func=lambda message: message.text == config.botName + " " + lt_mainmenu)
+mainMenuCommand = config.botName + " " + lt_mainmenu
+@bot.message_handler(func=lambda message: message.text == mainMenuCommand)
 def command_srvstart(message):
-  if message.from_user.id == chatid:
+    chatid = message.from_user.id
     bot.send_message(chatid, text=("Start menu"), reply_markup=markup)
-  else:
-    pass
 # /Main menu
 
 # Except proc kill

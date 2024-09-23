@@ -173,7 +173,7 @@ def get_id(i):
 @bot.message_handler(commands=["start", "help"])
 def send_welcome(message):
   chatid = message.chat.id
-  save_chat_id(chatId)
+  save_chat_id(chatid)
   bot.send_message(chatid, ("Hi, I'm here to make your life a little bit easier ;) "),reply_markup=markup)
     
 # /Start

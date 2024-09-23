@@ -44,8 +44,14 @@ def save_chat_id(chat_id):
 def load_chat_id():
     if os.path.exists('chat_id.txt'):
         with open('chat_id.txt', 'r') as f:
-            return int(f.read().strip())
-    return None;
+            content = f.read().strip()
+            if content.isdigit():  # Проверяем, что содержимое файла - это число
+                return int(content)
+            else:
+                print("Некорректные данные в файле chat_id.txt")  # Логируем ошибку
+    else:
+        print("Файл chat_id.txt не существует")  # Логируем отсутствие файла
+    return None  # Возвращаем None, если файла нет или данные некорректны
  
 chatId = load_chat_id()
 

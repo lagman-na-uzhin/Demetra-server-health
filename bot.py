@@ -45,7 +45,7 @@ def load_chat_id():
     if os.path.exists('chat_id.txt'):
         with open('chat_id.txt', 'r') as f:
             return int(f.read().strip())
-    return None
+    return config.tg
  
 chatId = load_chat_id()
 

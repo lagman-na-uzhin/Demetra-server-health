@@ -2208,7 +2208,7 @@ def dockerSaveImg(each_metrics_count_run, each_metrics_time, each_metrics_count_
 linuxToolsCommand = config.botName + " " + lt_linuxtools
 @bot.message_handler(func=lambda message: message.text == linuxToolsCommand)
 def command_linuxtools(message):
-    chatid = message.chat.id:
+    chatid = message.chat.id
     bot.send_message(chatid, text=("Slowly, slowly, some processes need time. ") + "\U000023F3", reply_markup=markuplinux)
 # /Linux tools start
 

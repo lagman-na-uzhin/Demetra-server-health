@@ -2208,15 +2208,15 @@ def dockerSaveImg(each_metrics_count_run, each_metrics_time, each_metrics_count_
 linuxToolsCommand = config.botName + " " + lt_linuxtools
 @bot.message_handler(func=lambda message: message.text == linuxToolsCommand)
 def command_linuxtools(message):
-chatid = message.from_user.id:
-bot.send_message(chatid, text=("Slowly, slowly, some processes need time. ") + "\U000023F3", reply_markup=markuplinux)
+    chatid = message.chat.id:
+    bot.send_message(chatid, text=("Slowly, slowly, some processes need time. ") + "\U000023F3", reply_markup=markuplinux)
 # /Linux tools start
 
 # Ping test
 pingCommand = config.botName + " " + lt_ping
 @bot.message_handler(func=lambda message: message.text == pingCommand)
 def command_pingcheck(message):
-    chatid = message.from_user.id
+    chatid = message.chat.id
     try:
       bot.send_chat_action(chatid, "typing")
       pingcheck = "ping -c 5 " + config.srvping
@@ -2231,7 +2231,7 @@ def command_pingcheck(message):
 tracerouteCommand = config.botName + " " + lt_traceroute
 @bot.message_handler(func=lambda message: message.text == tracerouteCommand)
 def command_traceroutecheck(message):
-    chatid = message.from_user.id
+    chatid = message.chat.id
     try:
       bot.send_chat_action(chatid, "typing")
       bot.send_chat_action(chatid, "typing")
@@ -2246,7 +2246,7 @@ def command_traceroutecheck(message):
 topprocCommand = config.botName + " " + lt_topproc
 @bot.message_handler(func=lambda message: message.text == ctopprocCommand)
 def command_timediff(message):
-    chatid = message.from_user.id
+    chatid = message.chat.id
     try:
       topps = "ps -eo pid,ppid,user,start,%mem,pcpu,cmd --sort=-%mem | head"
       topps = str(subprocess.check_output(topps, shell = True,encoding='utf-8'))
@@ -2259,7 +2259,7 @@ def command_timediff(message):
 startTimeCommand = config.botName + " " + lt_starttime
 @bot.message_handler(func=lambda message: message.text == startTimeCommand)
 def command_srvstart(message):
-    chatid = message.from_user.id:
+    chatid = message.chat.id:
     try:
       startt = ("System start: ") + str(datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%b/%d/%Y %H:%M:%S"))
       bot.send_message(chatid, text=startt, reply_markup=markuplinux)
@@ -2271,7 +2271,7 @@ def command_srvstart(message):
 currntwrkloadCommand = config.botName + " " + lt_currntwrkload
 @bot.message_handler(func=lambda message: message.text == currntwrkloadCommand)
 def command_currntwrkload(message):
-    chatid = message.from_user.id:
+    chatid = message.chat.id:
     try:
       bot.send_chat_action(chatid, "typing")
       currentloadn = psutil.net_io_counters()
@@ -2295,7 +2295,7 @@ def command_currntwrkload(message):
 currntdiskloadCommand = config.botName + " " + lt_currntdiskload
 @bot.message_handler(func=lambda message: message.text == currntdiskloadCommand)
 def command_currdiskload(message):
-    chatid message.from_user.id
+    chatid message.chat.id
     try:
       bot.send_chat_action(chatid, "typing")
       currentloadd = psutil.disk_io_counters()
@@ -2322,7 +2322,7 @@ def command_currdiskload(message):
 spdtst = config.botName + " " + lt_spdtst
 @bot.message_handler(func=lambda message: message.text == spdtst)
 def command_testspeed(message):
-    chatid = message.from_user.id:
+    chatid = message.chat.id:
     try:
       bot.send_chat_action(chatid, "typing")
       testspeedcmd = "python3 " + config.serverbotpath + "/speedtest-cli --share | grep -i 'Share results' | awk '{print $3}' | wget -i - -O /tmp/speedtestcheck.png"
@@ -2338,7 +2338,7 @@ def command_testspeed(message):
 mainMenuCommand = config.botName + " " + lt_mainmenu
 @bot.message_handler(func=lambda message: message.text == mainMenuCommand)
 def command_srvstart(message):
-    chatid = message.from_user.id
+    chatid = message.chat.id
     bot.send_message(chatid, text=("Start menu"), reply_markup=markup)
 # /Main menu
 

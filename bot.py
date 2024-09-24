@@ -2126,7 +2126,7 @@ dockerContainerCommand = config.botName + " " + lt_docker_container
 def command_linuxtools(message):
     try:
         chatid = message.chat.id
-        result = run(["docker", "ps"], stdout=PIPE, stderr=PIPE, universal_newlines=True)
+        result = run(["docker", "ps", "-a"], stdout=PIPE, stderr=PIPE, universal_newlines=True)
         
         error_msg = ""
         if result.stderr:
@@ -2144,6 +2144,13 @@ def command_linuxtools(message):
             status = parts[4]  # STATUS
             ports = parts[5] if len(parts) > 5 else "N/A"  # PORTS (если доступно)
             name = parts[-1]  # NAMES (последний элемент в строке)
+
+            # Добавляем символы в зависимости от статуса
+            if status.startswith("Up"):  # Запущен
+                status = "✓ " + status  # Символ для запущенного
+            else:  # Остановлен или в другом состоянии
+                status = "✗ " + status  # Символ для остановленного
+
             table.append(f"{status}\t{ports}\t{name}")  # Форматируем строку
 
         # Формируем строку с заголовками и данными
@@ -2160,6 +2167,7 @@ def command_linuxtools(message):
         bot.send_message(chatid, f"<pre>{table_string}</pre>", parse_mode="HTML")
     except Exception as e:
         bot.send_message(chatid, text=str(e))
+
 
 
 # get docker info in the specified datetime

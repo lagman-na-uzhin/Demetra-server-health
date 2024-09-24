@@ -2259,7 +2259,7 @@ def command_timediff(message):
 startTimeCommand = config.botName + " " + lt_starttime
 @bot.message_handler(func=lambda message: message.text == startTimeCommand)
 def command_srvstart(message):
-    chatid = message.chat.id:
+    chatid = message.chat.id
     try:
       startt = ("System start: ") + str(datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%b/%d/%Y %H:%M:%S"))
       bot.send_message(chatid, text=startt, reply_markup=markuplinux)
@@ -2271,7 +2271,7 @@ def command_srvstart(message):
 currntwrkloadCommand = config.botName + " " + lt_currntwrkload
 @bot.message_handler(func=lambda message: message.text == currntwrkloadCommand)
 def command_currntwrkload(message):
-    chatid = message.chat.id:
+    chatid = message.chat.id
     try:
       bot.send_chat_action(chatid, "typing")
       currentloadn = psutil.net_io_counters()
@@ -2322,7 +2322,7 @@ def command_currdiskload(message):
 spdtst = config.botName + " " + lt_spdtst
 @bot.message_handler(func=lambda message: message.text == spdtst)
 def command_testspeed(message):
-    chatid = message.chat.id:
+    chatid = message.chat.id
     try:
       bot.send_chat_action(chatid, "typing")
       testspeedcmd = "python3 " + config.serverbotpath + "/speedtest-cli --share | grep -i 'Share results' | awk '{print $3}' | wget -i - -O /tmp/speedtestcheck.png"

@@ -451,7 +451,7 @@ def command_cpu(message):
 
 # RAM
 ramCommand = config.botName + " " + lt_ram
-@bot.message_handler(func=lambda message: message.text == ramCommand
+@bot.message_handler(func=lambda message: message.text == ramCommand)
 def command_ram(message):
     try:
       chatid = message.chat.id
@@ -2119,19 +2119,20 @@ def inlinekeyboards(call):
 #######################################################
 # Docker container
 # Docker container start
-@bot.message_handler(func=lambda message: message.text == config.botName + " " + lt_docker_container)
+dockerContainerCommand = config.botName + " " + lt_docker_container
+@bot.message_handler(func=lambda message: message.text == dockerContainerCommand)
 def command_linuxtools(message):
     try :
-        if message.from_user.id == chatid:
-            result = run(["docker", "ps"], stdout=PIPE, stderr=PIPE, universal_newlines=True)
-            error_msg = ""
-            if not str(result.stderr) == "" :
-                error_msg += "\nError : \n" + str(result.stderr)
-            result = str(result.stdout)
-            dockerGetInfo(60)
-            container_run = open('/tmp/containerRunCounts.png', 'rb')
-            bot.send_photo(chatid, container_run, reply_markup=container_load_hist)
-            bot.send_message(chatid, result)
+        chatid = message.from_user.id
+        result = run(["docker", "ps"], stdout=PIPE, stderr=PIPE, universal_newlines=True)
+        error_msg = ""
+        if not str(result.stderr) == "" :
+            error_msg += "\nError : \n" + str(result.stderr)
+        result = str(result.stdout)
+        dockerGetInfo(60)
+        container_run = open('/tmp/containerRunCounts.png', 'rb')
+        bot.send_photo(chatid, container_run, reply_markup=container_load_hist)
+        bot.send_message(chatid, result)
     except Exception as e:
         bot.send_message(chatid, text=(e))
 

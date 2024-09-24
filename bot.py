@@ -137,7 +137,34 @@ def get_id(i):
 def send_welcome(message):
   global notificationChatId
   notificationChatId = message.chat.id
-  bot.send_message(notificationChatId, ("Hi, I'm here to make your life a little bit easier ;) "),reply_markup=markup)
+  bot.send_message(notificationChatId, ("bot.send_message(
+    notificationChatId,
+    (
+        "Commands \n"
+        "exampleBotName cpu\n"
+        "exampleBotName ram\n"
+        "exampleBotName  Disk usage\n"
+        "exampleBotName  Linux tools\n"
+        "#----\n"
+        "exampleBotName Ping test\n"
+        "exampleBotName Traceroute test\n"
+        "exampleBotName Top processes\n"
+        "#exampleBotName Port check\n"
+        "#exampleBotName \U0001F442 \U0001F3FC Port check\n"
+        "exampleBotName Network speed test\n"
+        "exampleBotName Current network load\n"
+        "exampleBotName Current disk i/o\n"
+        "exampleBotName Uptime\n"
+        "exampleBotName Main menu\n"
+        "exampleBotName Docker Container\n"
+        "exampleBotName My pool info\n"
+        "exampleBotName Near logs\n"
+        "exampleBotName Current\n"
+        "exampleBotName Proposals\n"
+        "exampleBotName Next"
+    ),
+    reply_markup=markup
+)
     
 # /Start
 

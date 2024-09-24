@@ -2124,19 +2124,36 @@ def inlinekeyboards(call):
 dockerContainerCommand = config.botName + " " + lt_docker_container
 @bot.message_handler(func=lambda message: message.text == dockerContainerCommand)
 def command_linuxtools(message):
-    try :
+    try:
         chatid = message.chat.id
         result = run(["docker", "ps"], stdout=PIPE, stderr=PIPE, universal_newlines=True)
+        
         error_msg = ""
-        if not str(result.stderr) == "" :
+        if result.stderr:
             error_msg += "\nError : \n" + str(result.stderr)
-        result = str(result.stdout)
+        
+
+        lines = result.stdout.strip().split('\n')[1:]  # Убираем заголовок
+        filtered_result = []
+        
+        for line in lines:
+            parts = line.split()  # Разделяем строку по пробелам
+            # Собираем только нужные столбцы: STATUS, PORTS, NAMES
+            filtered_line = " ".join(parts[4:])  # Используем индексы 4, 5 и т.д. для получения нужных столбцов
+            filtered_result.append(filtered_line)
+
+        # Превращаем отфильтрованные строки обратно в текст
+        filtered_result_text = "\n".join(filtered_result)
+        
         dockerGetInfo(60)
+        
         container_run = open('/tmp/containerRunCounts.png', 'rb')
         bot.send_photo(chatid, container_run, reply_markup=container_load_hist)
-        bot.send_message(chatid, result)
+        # Отправляем сообщение с отфильтрованным выводом
+        bot.send_message(chatid, filtered_result_text or "No running containers found.")
     except Exception as e:
-        bot.send_message(chatid, text=(e))
+        bot.send_message(chatid, text=str(e))
+
 
 # get docker info in the specified datetime
 def dockerGetInfo(range_time) :

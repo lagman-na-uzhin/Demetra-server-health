@@ -2133,7 +2133,7 @@ def command_linuxtools(message):
             error_msg += "\nError : \n" + str(result.stderr)
 
         # Заголовок для отображения
-        headers = ["NAMES"]
+        headers = ["STATUS", "NAMES"]
         table = []
 
         # Собираем данные в таблицу
@@ -2143,12 +2143,19 @@ def command_linuxtools(message):
 
             # Имя контейнера будет последней частью строки
             name = parts[-1]  # NAMES (последняя часть строки)
+            status = parts[4]  # STATUS (предполагаем, что статус находится в 5-й позиции)
 
-            # Добавляем имя контейнера в таблицу
-            table.append(name)
+            # Определяем смайлик в зависимости от статуса контейнера
+            if "Up" in status:
+                emoji = "✅"  # Зеленый смайлик для запущенного контейнера
+            else:
+                emoji = "❌"  # Красный смайлик для остановленного контейнера
+
+            # Добавляем статус и имя контейнера в таблицу
+            table.append(f"{emoji} {name}")
 
         # Формируем строку с заголовками и данными
-        table_string = f"{headers[0]}\n" + "\n".join(table)
+        table_string = f"{headers[0]}  {headers[1]}\n" + "\n".join(table)
 
         # Вызов функции для получения информации о контейнерах
         dockerGetInfo(60)

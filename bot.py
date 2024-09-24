@@ -2131,26 +2131,33 @@ def command_linuxtools(message):
         error_msg = ""
         if result.stderr:
             error_msg += "\nError : \n" + str(result.stderr)
-        
 
+        # Заголовки для отображения
+        headers = ["STATUS", "PORTS", "NAMES"]
+        table = []
+
+        # Собираем данные в таблицу
         lines = result.stdout.strip().split('\n')[1:]  # Убираем заголовок
-        filtered_result = []
-        
         for line in lines:
             parts = line.split()  # Разделяем строку по пробелам
-            # Собираем только нужные столбцы: STATUS, PORTS, NAMES
-            filtered_line = " ".join(parts[4:])  # Используем индексы 4, 5 и т.д. для получения нужных столбцов
-            filtered_result.append(filtered_line)
+            # Собираем нужные столбцы
+            status = parts[4]  # STATUS
+            ports = parts[5] if len(parts) > 5 else "N/A"  # PORTS (если доступно)
+            name = parts[-1]  # NAMES (последний элемент в строке)
+            table.append(f"{status}\t{ports}\t{name}")  # Форматируем строку
 
-        # Превращаем отфильтрованные строки обратно в текст
-        filtered_result_text = "\n".join(filtered_result)
-        
+        # Формируем строку с заголовками и данными
+        table_string = "\t".join(headers) + "\n" + "\n".join(table)
+
+        # Вызов функции для получения информации о контейнерах
         dockerGetInfo(60)
         
+        # Открываем изображение
         container_run = open('/tmp/containerRunCounts.png', 'rb')
         bot.send_photo(chatid, container_run, reply_markup=container_load_hist)
-        # Отправляем сообщение с отфильтрованным выводом
-        bot.send_message(chatid, filtered_result_text or "No running containers found.")
+        
+        # Отправляем сообщение с отфильтрованным выводом в виде таблицы
+        bot.send_message(chatid, f"<pre>{table_string}</pre>", parse_mode="HTML")
     except Exception as e:
         bot.send_message(chatid, text=str(e))
 

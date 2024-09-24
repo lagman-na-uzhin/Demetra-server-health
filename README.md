@@ -15,9 +15,9 @@ source ${HOME}/.zshrc
 
 ### if command alias dont work, use 
 
-sudo systemctl stop serverbot
-sudo systemctl start serverbot
-sudo systemctl status serverbot
+sudo systemctl stop serverbot,
+sudo systemctl start serverbot,
+sudo systemctl status serverbot,
 
 
 ### Update

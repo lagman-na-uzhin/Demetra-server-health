@@ -2295,7 +2295,7 @@ def command_currntwrkload(message):
 currntdiskloadCommand = config.botName + " " + lt_currntdiskload
 @bot.message_handler(func=lambda message: message.text == currntdiskloadCommand)
 def command_currdiskload(message):
-    chatid message.chat.id
+    chatid = message.chat.id
     try:
       bot.send_chat_action(chatid, "typing")
       currentloadd = psutil.disk_io_counters()

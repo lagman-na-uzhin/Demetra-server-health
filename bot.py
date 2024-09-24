@@ -435,7 +435,7 @@ def historygetslowlog(f,t,lbl,ptitle,poutf,rm):
 #/History load welcome
 
 # CPU
-cpuCommand = onfig.botName + " " + lt_cpu
+cpuCommand = config.botName + " " + lt_cpu
 @bot.message_handler(func=lambda message: message.text == cpuCommand)
 def command_cpu(message):
     try:

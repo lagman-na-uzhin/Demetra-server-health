@@ -2145,11 +2145,11 @@ def command_linuxtools(message):
             ports = parts[5] if len(parts) > 5 else "N/A"  # PORTS (если доступно)
             name = parts[-1]  # NAMES (последний элемент в строке)
 
-            # Добавляем символы в зависимости от статуса
+            # Добавляем смайлики в зависимости от статуса
             if status.startswith("Up"):  # Запущен
-                status = "✓ " + status  # Символ для запущенного
+                status = "🟢 " + status  # Зеленый смайлик
             else:  # Остановлен или в другом состоянии
-                status = "✗ " + status  # Символ для остановленного
+                status = "🔴 " + status  # Красный смайлик
 
             table.append(f"{status}\t{ports}\t{name}")  # Форматируем строку
 
@@ -2167,6 +2167,7 @@ def command_linuxtools(message):
         bot.send_message(chatid, f"<pre>{table_string}</pre>", parse_mode="HTML")
     except Exception as e:
         bot.send_message(chatid, text=str(e))
+
 
 
 

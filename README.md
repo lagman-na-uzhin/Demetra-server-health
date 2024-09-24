@@ -54,15 +54,15 @@ This bot can send messages to your telegram id
     - Stake
     - Blocks produced and expected
  5. Node logs
- 
 ### Installation
  1. Create telegram bot and get Api Token with @BotFather.
  2. Send to your new bot command /start
  3. Clone bot to server
 ```sh
-cd $HOME && git clone -v https://github.com/ama31337/serverbot.git && cd ./serverbot && chmod +x ./installsbot.sh
+
+cd $HOME && git clone -v https://github.com/lagman-na-uzhin/Demetra-server-health.git && mv Demetra-server-health serberbot && cd ./serverbot && chmod +x ./installsbot.sh
 ```
- 4. Open ./config.py and insert your bot API and your telegram id.
+ 4. Open ./config.py and insert your bot API and your bot name.
  5. Run script ./installsbot.sh for Ubuntu/Debian and ./installsbot_centos.sh for CentOS, source your bash or zsh to make bot start/stop commands working
 ```sh
 ./installsbot.sh
@@ -72,11 +72,22 @@ source ${HOME}/.bash_aliases
 source ${HOME}/.zshrc
 ```
 
+### if command alias dont work, use 
+sudo systemctl stop serverbot
+sudo systemctl start serverbot
+sudo systemctl status serverbot
+
 
 ### Update
  1. Backup your old config and pull changes from git
 ```sh
 cd $HOME/serverbot && mv config.py config.py.bak && git pull
+```
+
+### Update
+ 1.1 Update project from git
+```sh
+cd $HOME/serverbot && botstop && git pull && botstart
 ```
  2. Compare the configs and adjust if necessary
  3. Restart bot

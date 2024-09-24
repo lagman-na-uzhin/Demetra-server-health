@@ -2288,7 +2288,7 @@ def command_currntwrkload(message):
       bot.send_message(chatid, text=("*Current network load\nIncoming:* _") + recvspd + (" Mb/s_\n*Outgoing:* _") + sentspd + (" Mb/s_"), parse_mode="Markdown", reply_markup=markuplinux)
       historygetnb("db/networkload.dat",0.5,("Mb/s"),("Upload"),("Download"),"/tmp/networkload.png",networkcheckhist)
     except:
-      bot.send_message(chatid, text=("Can't get current network load"), parse_mode="Markdown", reply_markup=markuplinux)    pass
+      bot.send_message(chatid, text=("Can't get current network load"), parse_mode="Markdown", reply_markup=markuplinux)
 # /Current network load
 
 # Disk I/O

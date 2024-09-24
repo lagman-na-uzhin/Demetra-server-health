@@ -148,8 +148,6 @@ def send_welcome(message):
         "exampleBotName Ping test\n"
         "exampleBotName Traceroute test\n"
         "exampleBotName Top processes\n"
-        "#exampleBotName Port check\n"
-        "#exampleBotName \U0001F442 \U0001F3FC Port check\n"
         "exampleBotName Network speed test\n"
         "exampleBotName Current network load\n"
         "exampleBotName Current disk i/o\n"

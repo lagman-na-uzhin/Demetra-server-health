@@ -60,9 +60,11 @@ else:
     nearlogsreq="tail -n 5 ~/.nearup/logs/" + config.nearnetwork + ".log"
 #/set NEAR logs
 
+notificationChatId = ''
+
 # Menu vars
-lt_cpu = ("CPU")
-lt_ram = ("RAM")
+lt_cpu = ("cpu")
+lt_ram = ("ram")
 lt_disks = ("Disk usage")
 lt_linuxtools = ("Linux tools")
 #----
@@ -134,7 +136,9 @@ def get_id(i):
 @bot.message_handler(commands=["start", "help"])
 def send_welcome(message):
   chatid = message.chat.id
-  save_chat_id(chatid)
+
+  global notificationChatId
+  notificationChatId = chatid
   bot.send_message(chatid, ("Hi, I'm here to make your life a little bit easier ;) "),reply_markup=markup)
     
 # /Start
@@ -2123,7 +2127,7 @@ dockerContainerCommand = config.botName + " " + lt_docker_container
 @bot.message_handler(func=lambda message: message.text == dockerContainerCommand)
 def command_linuxtools(message):
     try :
-        chatid = message.from_user.id
+        chatid = message.chat.id
         result = run(["docker", "ps"], stdout=PIPE, stderr=PIPE, universal_newlines=True)
         error_msg = ""
         if not str(result.stderr) == "" :
@@ -2364,7 +2368,7 @@ def AlertsNotificationsNode():
         if i.output != None:
           if alrtprdnode in config.repeattimealarmnode:
             try:
-              bot.send_message(chatid, text="\U0001F6A8 " + ("Near node is not running."))
+              bot.send_message(notificationChatId, text="\U0001F6A8 " + ("Near node is not running."))
               time.sleep(2)
             except:
               pass
@@ -2393,7 +2397,7 @@ def AlertsNotificationsSync():
         if int(float(syncdiff)) >= config.syncalarm:
           if alrtprdsync in config.repeattimealarmnode:
             try:
-                bot.send_message(chatid,"\U0001F6A8 " + ("Node out of sync ") + str(syncdiff) + (" blocks behind") )
+                bot.send_message(notificationChatId,"\U0001F6A8 " + ("Node out of sync ") + str(syncdiff) + (" blocks behind") )
             except:
               pass
             alrtprdsync +=5
@@ -2414,6 +2418,7 @@ def AlertsNotificationsSync():
 def AlertsNotificationsBlocks():
   td = 0
   alrtprdblocks = 30
+  global notificationChatId
   while True:
     if td == 30:
       try:
@@ -2445,7 +2450,7 @@ def AlertsNotificationsBlocks():
         if int(float(blocksdiff)) >= config.blocksdiff:
           if alrtprdblocks in config.repeattimealarmnode:
             try:
-                bot.send_message(chatid,"\U0001F6A8 " + str(blocksdiff) + ("blocks pruduced less than expected !!! "))
+                bot.send_message(notificationChatId,"\U0001F6A8 " + str(blocksdiff) + ("blocks pruduced less than expected !!! "))
             except:
               pass
             alrtprdblocks +=30
@@ -2466,6 +2471,7 @@ def AlertsNotificationsBlocks():
 def AlertsNotificationsChunks():
   td = 0
   alrtprdchunks = 30
+  global notificationChatId
   while True:
     if td == 30:
       try:
@@ -2497,7 +2503,7 @@ def AlertsNotificationsChunks():
         if int(float(chunksdiff)) >= config.chunksdiff:
           if alrtprdchunks in config.repeattimealarmnode:
             try:
-                bot.send_message(chatid,"\U0001F6A8 " + str(chunksdiff) + ("chunks pruduced less than expected !!! "))
+                bot.send_message(notificationChatId,"\U0001F6A8 " + str(chunksdiff) + ("chunks pruduced less than expected !!! "))
             except:
               pass
             alrtprdchunks +=30
@@ -2518,6 +2524,7 @@ def AlertsNotificationsChunks():
 def AlertsNotificationsRam():
   td = 0
   alrtprdmem = 5
+  global notificationChatId
   while True:
     if td == 5:
       try:
@@ -2531,7 +2538,7 @@ def AlertsNotificationsRam():
         if int(float(memload)) >= config.memloadalarm:
           if alrtprdmem in config.repeattimealarmsrv:
             try:
-              bot.send_message(chatid, text="\U0001F6A8 " + ("High memory load! ") + memload,  parse_mode="Markdown")
+              bot.send_message(notificationChatId, text="\U0001F6A8 " + ("High memory load! ") + memload,  parse_mode="Markdown")
             except:
               pass
             alrtprdmem +=5
@@ -2552,6 +2559,7 @@ def AlertsNotificationsRam():
 def AlertsNotificationsCPU():
   td = 0
   alrtprdcpu = 5
+  global notificationChatId
   while True:
     if td == 5:
       try:
@@ -2562,7 +2570,7 @@ def AlertsNotificationsCPU():
         if int(float(cpuutilalert)) >= config.cpuutilalarm:
           if alrtprdcpu in config.repeattimealarmsrv:
             try:
-              bot.send_message(chatid,"\U000026A1" + ("High CPU Utilization! ") + cpuutilalert + "%")
+              bot.send_message(notificationChatId,"\U000026A1" + ("High CPU Utilization! ") + cpuutilalert + "%")
             except:
               pass
             alrtprdcpu +=5
@@ -2583,6 +2591,7 @@ def AlertsNotificationsCPU():
 def AlertsNotificationsping():
   td = 0
   alrtprdpng = 5
+  global notificationChatId
   while True:
     if td == 5:
       try:
@@ -2594,7 +2603,7 @@ def AlertsNotificationsping():
         if int(float(pingc)) >= config.pingcalarm:
           if alrtprdpng in config.repeattimealarmsrv:
             try:
-              bot.send_message(chatid,"\U000026A1 " + ("High ping! ") + pingc + " ms")
+              bot.send_message(notificationChatId,"\U000026A1 " + ("High ping! ") + pingc + " ms")
             except:
               pass
             alrtprdpng +=5
@@ -2665,11 +2674,12 @@ def monitoringdiskio():
 def collectDockerMetrics() :
     while True :
         try :
+            global notificationChatId
             result = run(["docker", "ps", "-a"], stdout=PIPE, stderr=PIPE, universal_newlines=True)
             # have error message
             if not str(result.stderr) == "" :
                 error_msg = "\nError : \n" + str(result.stderr)
-                bot.send_message(chatid, error_msg, reply_markup=markup)
+                bot.send_message(notificationChatId, error_msg, reply_markup=markup)
                 continue
             # std out
             result = str(result.stdout).split("\n")
@@ -2701,11 +2711,12 @@ def collectDockerMetrics() :
             db_file.close()
             time.sleep(5)
         except Exception as e:
-            bot.send_message(chatid, e, reply_markup=markup)
+            bot.send_message(notificationChatId, e, reply_markup=markup)
             print(e)
 
 # check whether the number of containers have changed compare to last metrics
 def checkContainerNumber(docker_last_history, content) :
+    global notificationChatId
     try :
         # key is the time found this metrics
         for key in docker_last_history.keys() :
@@ -2729,7 +2740,7 @@ def checkContainerNumber(docker_last_history, content) :
                 # check whether the past container name not exist in new record
                 if container_name not in cur_name :
                     msg = "Container not Existed !" + "\n" + container_name
-                    bot.send_message(chatid, msg, reply_markup=markup)
+                    bot.send_message(notificationChatId, msg, reply_markup=markup)
                 # still existed then check whether it still running
                 else :
                     # container index in current record
@@ -2741,19 +2752,19 @@ def checkContainerNumber(docker_last_history, content) :
                         # running convert to not running
                         if last_running[i] == "True" :
                             msg = "Container not Running !" + "\n" + container_name
-                            bot.send_message(chatid, msg, reply_markup=markup)
+                            bot.send_message(notificationChatId, msg, reply_markup=markup)
                         else :
                             msg = "Container start Running !" + "\n" + container_name
-                            bot.send_message(chatid, msg, reply_markup=markup)
+                            bot.send_message(notificationChatId, msg, reply_markup=markup)
             # check current record have different with last record
             for container_name in cur_name :
                 if container_name not in last_name :
                     msg = "New Container !" + "\n" + container_name
-                    bot.send_message(chatid, msg, reply_markup=markup)
+                    bot.send_message(notificationChatId, msg, reply_markup=markup)
             #bot.send_message(chatid, str(cur_name) + "\n" + str(last_name), reply_markup=markup)
             #bot.send_message(chatid, str(time.time()), reply_markup=markup)
     except Exception as e:
-        bot.send_message(chatid, e, reply_markup=markup)
+        bot.send_message(notificationChatId, e, reply_markup=markup)
 
 
 if __name__ == '__main__':

@@ -2127,7 +2127,7 @@ def command_linuxtools(message):
     try:
         chatid = message.chat.id
         result = run(["docker", "ps", "-a"], stdout=PIPE, stderr=PIPE, universal_newlines=True)
-        
+
         error_msg = ""
         if result.stderr:
             error_msg += "\nError : \n" + str(result.stderr)
@@ -2140,21 +2140,26 @@ def command_linuxtools(message):
         lines = result.stdout.strip().split('\n')[1:]  # Убираем заголовок
         for line in lines:
             parts = line.split()  # Разделяем строку по пробелам
-            # Собираем нужные столбцы
-            status = parts[4]  # STATUS
-            ports = parts[5] if len(parts) > 5 else "N/A"  # PORTS (если доступно)
-            name = parts[-1]  # NAMES (последний элемент в строке)
+            
+            # Статус будет в колонке 4 или 5, в зависимости от формата вывода
+            # Если контейнер запущен, то статус обычно начинается со слова "Up"
+            status_index = 4 if len(parts) >= 5 and parts[4].startswith("Up") else 5
+            
+            status = " ".join(parts[status_index:])  # STATUS (все, что идет после "Up" или "Exited")
+            ports = parts[3] if len(parts) > 3 else "N/A"  # PORTS (если доступно)
+            name = " ".join(parts[-1:])  # NAMES (последняя часть строки)
 
             # Добавляем смайлики в зависимости от статуса
-            if status.startswith("Up"):  # Запущен
+            if "Up" in status:  # Запущен
                 status = "🟢 " + status  # Зеленый смайлик
             else:  # Остановлен или в другом состоянии
                 status = "🔴 " + status  # Красный смайлик
 
-            table.append(f"{status}\t{ports}\t{name}")  # Форматируем строку
+            # Форматируем строку с дополнительными пробелами для ширины
+            table.append(f"{status:<10}   {ports:<25}   {name}")
 
         # Формируем строку с заголовками и данными
-        table_string = "\t".join(headers) + "\n" + "\n".join(table)
+        table_string = f"{headers[0]:<10}   {headers[1]:<25}   {headers[2]}\n" + "\n".join(table)
 
         # Вызов функции для получения информации о контейнерах
         dockerGetInfo(60)
@@ -2167,6 +2172,7 @@ def command_linuxtools(message):
         bot.send_message(chatid, f"<pre>{table_string}</pre>", parse_mode="HTML")
     except Exception as e:
         bot.send_message(chatid, text=str(e))
+
 
 
 

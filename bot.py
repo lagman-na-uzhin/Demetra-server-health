@@ -2133,7 +2133,7 @@ def command_linuxtools(message):
             error_msg += "\nError : \n" + str(result.stderr)
 
         # Заголовки для отображения
-        headers = ["STATUS", "PORTS", "NAMES"]
+        headers = ["STATUS", "NAMES"]
         table = []
 
         # Собираем данные в таблицу
@@ -2146,7 +2146,6 @@ def command_linuxtools(message):
             status_index = 4 if len(parts) >= 5 and parts[4].startswith("Up") else 5
             
             status = " ".join(parts[status_index:])  # STATUS (все, что идет после "Up" или "Exited")
-            ports = parts[3] if len(parts) > 3 else "N/A"  # PORTS (если доступно)
             name = " ".join(parts[-1:])  # NAMES (последняя часть строки)
 
             # Добавляем смайлики в зависимости от статуса
@@ -2156,10 +2155,10 @@ def command_linuxtools(message):
                 status = "🔴 " + status  # Красный смайлик
 
             # Форматируем строку с дополнительными пробелами для ширины
-            table.append(f"{status:<10}   {ports:<25}   {name}")
+            table.append(f"{status:<10}   {name}")
 
         # Формируем строку с заголовками и данными
-        table_string = f"{headers[0]:<10}   {headers[1]:<25}   {headers[2]}\n" + "\n".join(table)
+        table_string = f"{headers[0]:<10}   {headers[1]}\n" + "\n".join(table)
 
         # Вызов функции для получения информации о контейнерах
         dockerGetInfo(60)
@@ -2172,8 +2171,6 @@ def command_linuxtools(message):
         bot.send_message(chatid, f"<pre>{table_string}</pre>", parse_mode="HTML")
     except Exception as e:
         bot.send_message(chatid, text=str(e))
-
-
 
 
 

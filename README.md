@@ -3,7 +3,7 @@
 
 cd $HOME && git clone -v https://github.com/lagman-na-uzhin/Demetra-server-health.git && mv Demetra-server-health serberbot && cd ./serverbot && chmod +x ./installsbot.sh
 ```
- 4. Open ./config.py and insert your bot API and your bot name.
+ 4. Open ./config.py and insert your bot API, your bot name, bot path and other settings.
  5. Run script ./installsbot.sh for Ubuntu/Debian and ./installsbot_centos.sh for CentOS, source your bash or zsh to make bot start/stop commands working
 ```sh
 ./installsbot.sh

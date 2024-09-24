@@ -137,8 +137,7 @@ def get_id(i):
 def send_welcome(message):
   global notificationChatId
   notificationChatId = message.chat.id
-  bot.send_message(notificationChatId, ("bot.send_message(
-    notificationChatId,
+  bot.send_message(notificationChatId,
     (
         "Commands \n"
         "exampleBotName cpu\n"
